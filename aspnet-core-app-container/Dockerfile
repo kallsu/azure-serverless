@@ -12,7 +12,8 @@ WORKDIR /home/example/web-api
 COPY . .
 
 # build and release
-RUN dotnet publish src/AzureServerless.AspNetCore.Api -c Release -f netcoreapp3.1 -o /var/wwwroot/web-api
+RUN dotnet publish src/AzureServerless.AspNetCore.Api -c Release -f netcoreapp3.1 -o /var/wwwroot/web-api \
+ && cp -v container/init.sh /var/wwwroot/web-api
  
 # Run
 WORKDIR /var/wwwroot/web-api
@@ -24,8 +25,21 @@ RUN rm -rf /home/example
 ENV ASPNETCORE_ENVIRONMENT=$Environment
 ENV ASPNETCORE_URLS="https://+:80"
 
-# Expose the port
-EXPOSE 80
+# Azure Custom container customization
+ENV SSH_PASSWD "root:Docker!"
+RUN apt-get update \
+        && apt-get install -y --no-install-recommends dialog \
+        && apt-get update \
+	&& apt-get install -y --no-install-recommends openssh-server \
+	&& echo "$SSH_PASSWD" | chpasswd 
 
-# Run container
-CMD ["dotnet", "AzureServerless.AspNetCore.Api.dll"]
+COPY sshd_config /etc/ssh/
+COPY init.sh /usr/local/bin/
+
+RUN chmod u+x /usr/local/bin/init.sh
+
+# Expose the ports
+EXPOSE 80 2222
+
+# Start SSH and run dotnet instruction
+ENTRYPOINT ["init.sh"]
