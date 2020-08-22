@@ -36,9 +36,13 @@ It is required create first all the components for the environmnet into Azure.
 
   `az webapp config set --resource-group MyContainerApp --name MyContainerWebApiAppName --generic-configurations "{"ASPNETCORE_ENVIRONMENT": "Development"}"`
 
-* Configure the Continuous Deployment to allow the reload of the container when it will be deployed again
+* Configure Application to pull from Container Regtry. Use the Continuous Deployment to automatically sync the container every time it is pushed
 
-  `az webapp deployment container config --enable-cd true --name MyContainerWebApiAppName --resource-group MyContainerApp`
+ ```az webapp config container set --docker-custom-image-name aspnetcore-webapi
+        --docker-registry-server-password <ADMIN_PASSWORD> //<---- See steps before
+        --docker-registry-server-url mywebapicontainerregistry.azurecr.io/aspnetcore-webapi:latest
+        --docker-registry-server-user mywebapicontainerregistry
+ ```
 
 ## 2. Container Setup ##
 
