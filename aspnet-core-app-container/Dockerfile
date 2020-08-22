@@ -18,12 +18,9 @@ RUN dotnet publish src/AzureServerless.AspNetCore.Api -c Release -f netcoreapp3.
 # Run
 WORKDIR /var/wwwroot/web-api
 
-# Clean home folder
-RUN rm -rf /home/example
-
 # Setup environment
 ENV ASPNETCORE_ENVIRONMENT=$Environment
-ENV ASPNETCORE_URLS="https://+:80"
+ENV ASPNETCORE_URLS="http://+:80"
 
 # Azure Custom container customization
 ENV SSH_PASSWD "root:Docker!"
@@ -33,10 +30,13 @@ RUN apt-get update \
 	&& apt-get install -y --no-install-recommends openssh-server \
 	&& echo "$SSH_PASSWD" | chpasswd 
 
-COPY sshd_config /etc/ssh/
-COPY init.sh /usr/local/bin/
+RUN mv -v /home/example/web-api/container/sshd_config /etc/ssh/
+RUN mv -v /home/example/web-api/container/init.sh /usr/local/bin/
 
 RUN chmod u+x /usr/local/bin/init.sh
+
+# Clean home folder
+RUN rm -rf /home/example
 
 # Expose the ports
 EXPOSE 80 2222
