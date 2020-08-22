@@ -3,13 +3,13 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "sites_my_container_webapi_app_name": {
-            "value": null
+            "value": "MyContainerWebApiAppName"
         },
         "serverfarms_my_container_webapi_app_plan_name": {
-            "value": null
+            "value": "MyContainerWebApiAppPlan"
         },
         "registries_MyWebApiContainerRegistry_name": {
-            "value": null
+            "value": "myWebApiContainerRegistry"
         }
     }
 }
